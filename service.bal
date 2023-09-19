@@ -2,11 +2,6 @@ import ballerina/http;
 import ballerina/mime;
 import ballerina/log;
 
-configurable string dbhost = ?;
-configurable string dbuser = ?;
-configurable string dbpwd = ?;
-configurable string database = ?;
-
 # Represents a country
 type Country record {
     # Country code
