@@ -1,5 +1,5 @@
 
-map<string> currencyCodes = {
+final map<string> & readonly currencyCodes = {
     "NZ": "NZD",
     "CK": "NZD",
     "NU": "NZD",

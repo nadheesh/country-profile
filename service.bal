@@ -44,16 +44,16 @@ type CurrencyInfo record {
     string symbolAltNarrow;
 };
 
-http:Client flagEndpoint = check new ("https://flagcdn.com");
-http:Client countryEndpoint = check new ("https://restcountries.com/");
+final http:Client flagEndpoint = check new ("https://flagcdn.com");
+final http:Client countryEndpoint = check new ("https://restcountries.com/");
 
 # API for providing a useful information about countries.
 # bound to port `9090`.
-service / on new http:Listener(8080) {
+isolated service / on new http:Listener(8080) {
 
     # Returns the summary of a country given the country code
     # + return - a Country or an error 
-    resource function get country/[string code]() returns Country|error {
+    isolated resource function get country/[string code]() returns Country|error {
         log:printInfo("get country information for: " + code);
 
         record {
@@ -85,7 +85,7 @@ service / on new http:Listener(8080) {
 
     # Returns the flag in PNG format.
     # + return - picture file or an error
-    resource function get country/[string code]/flag(http:Caller caller) returns error? {
+    isolated resource function get country/[string code]/flag(http:Caller caller) returns error? {
 
         log:printInfo("get country flag for: " + code);
 
@@ -104,7 +104,7 @@ service / on new http:Listener(8080) {
         check caller->respond(response);
     }
 
-    resource function get country/[string code]/currency() returns CurrencyInfo|error? {
+    isolated resource function get country/[string code]/currency() returns CurrencyInfo|error? {
 
         log:printInfo("get currency information for country: " + code);
 
@@ -127,7 +127,7 @@ service / on new http:Listener(8080) {
 # Utility function to get a flag from 3rd party api
 # + countryCode - the country code
 # + return - a `byte[]` or an error
-function getFlag(string countryCode) returns byte[]|error {
+isolated function getFlag(string countryCode) returns byte[]|error {
     http:Response res = check flagEndpoint->get("/80x60/" + countryCode + ".png");
     return check res.getBinaryPayload();
 }

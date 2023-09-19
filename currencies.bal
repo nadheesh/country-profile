@@ -6,6 +6,6 @@ type Currency record {
     string symbolAltNarrow?;
 };
 
-map<Currency> currencyMap = {
+final map<Currency> & readonly currencyMap = {
   
 };
