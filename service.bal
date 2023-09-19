@@ -1,7 +1,5 @@
 import ballerina/http;
 import ballerina/mime;
-import ballerinax/mysql;
-import ballerinax/mysql.driver as _;
 import ballerina/log;
 
 configurable string dbhost = ?;
@@ -54,11 +52,9 @@ type CurrencyInfo record {
 http:Client flagEndpoint = check new ("https://flagcdn.com");
 http:Client countryEndpoint = check new ("https://restcountries.com/");
 
-public mysql:Client mysqlEndpoint = check new (host = dbhost, user = dbuser, password = dbpwd, database = database);
-
 # API for providing a useful information about countries.
 # bound to port `9090`.
-service / on new http:Listener(9090) {
+service / on new http:Listener(8080) {
 
     # Returns the summary of a country given the country code
     # + return - a Country or an error 
@@ -111,19 +107,6 @@ service / on new http:Listener(9090) {
         }
 
         check caller->respond(response);
-    }
-
-    resource function get country/[string code]/subdivisions() returns SubDivision[]|error {
-
-        log:printInfo("get country subdivisions for: " + code);
-
-        stream<SubDivision, error?> queryRowResponse = mysqlEndpoint->query(`select code, name from subdivisions where country = ${code.toUpperAscii()}`);
-        SubDivision[] subs = [];
-        check from SubDivision result in queryRowResponse
-            do {
-                subs.push(result);
-            };
-        return subs;
     }
 
     resource function get country/[string code]/currency() returns CurrencyInfo|error? {
